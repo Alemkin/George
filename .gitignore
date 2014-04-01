@@ -1,0 +1,5 @@
+*.class
+*.jar
+lib/
+lwjgl-2.9.1/
+native/
