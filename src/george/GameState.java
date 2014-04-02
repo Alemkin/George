@@ -9,4 +9,5 @@ public class GameState {
     final public Player player; //You
 
     public float dt;
+    public float t;
 }

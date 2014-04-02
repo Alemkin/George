@@ -1,4 +1,4 @@
-package george.utils;
+package george;
 
 public class Mat2 {
     final public float a, b, c, d;

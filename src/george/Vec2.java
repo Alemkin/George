@@ -1,4 +1,4 @@
-package george.utils;
+package george;
 
 public class Vec2 {
     final public  float x;

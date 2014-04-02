@@ -1,4 +1,4 @@
-package george.utils;
+package george;
 
 public class Pair<X, Y> {
     public final X x;
