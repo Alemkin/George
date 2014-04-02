@@ -1,3 +1,5 @@
+package george.utils;
+
 public class Vec2 {
     final public  float x;
     final public float y;
@@ -15,7 +17,7 @@ public class Vec2 {
         return new Vec2(s*this.x, s*this.y);
     }
 
-    public Vec2 dot(Vec2 o) {
+    public float dot(Vec2 o) {
         return (this.x * o.x) + (this.y * o.y);
     }
 }

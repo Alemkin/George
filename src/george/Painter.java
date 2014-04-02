@@ -1,3 +1,16 @@
+package george;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
+
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.input.Mouse;
@@ -24,7 +37,7 @@ public class Painter implements Subsystem {
     }
 
     private int loadShader(String filename, int type) {
-        StringBuilder source = new StringBuilder;
+        StringBuilder source = new StringBuilder();
         int shaderID = 0;
 
         try {
@@ -68,6 +81,7 @@ public class Painter implements Subsystem {
             System.err.println("FATAL ERROR: "+s+": "+eStr);
             if(Display.isCreated()) Display.destroy();
             System.exit(-1);
+        }
     }
 
 

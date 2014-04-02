@@ -1,9 +1,11 @@
+package george.utils;
+
 public class Mat2 {
     final public float a, b, c, d;
     // [ A B ]
     // [ C D ]
 
-    public Mat2(float a, b, c, d) {
+    public Mat2(float a, float b, float c, float d) {
         this.a = a;
         this.b = b;
         this.c = c;

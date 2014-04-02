@@ -1,14 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
+package george;
 
-import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-//TODO: Make this into a package.
+import java.lang.System;
+import org.lwjgl.opengl.Display;
 
 public class George {
     private Subsystem[] subsystems;
@@ -16,18 +9,34 @@ public class George {
 
     public George() {
         subsystems = new Subsystem[] {new Angels(), new Laws(),
-            new Painter(), new Science()};
-        currentGameState = loadGameState();
+            new Science(), new Painter()};
+    }
+
+    public GameState loadGameState() {
+        //TODO
+        //
+        return null;
     }
 
     public void start() {
+        currentGameState = loadGameState();
+
         for(Subsystem s : subsystems) {
             s.start();
         }
+    }
+
+    public void loop() {
+        long lastTime = System.currentTimeMillis();
 
         while(!Display.isCloseRequested()) {
+            long currentTime = System.currentTimeMillis();
+            currentGameState.dt = (currentTime - lastTime)/1000.0f;
+
+            Display.sync(60);
 
             pollInput(); //TODO: Figure out how to deal with this elegantly.
+            //Probably move into Laws?
             GameState g = currentGameState;
 
             for(Subsystem s : subsystems) {
@@ -35,9 +44,13 @@ public class George {
             }
 
             currentGameState = g;
+            lastTime = currentTime;
 
             Display.update();
         }
+    }
+
+    public void destroy() {
 
         for(Subsystem s : subsystems) {
             s.destroy();
@@ -64,11 +77,13 @@ public class George {
     public static void main(String[] args) {
         George king = new George();
         king.start();
+        king.loop();
+        king.destroy();
     }
 
     public static void debug(String s) {
         System.err.println(s);
     }
 
-    static final DEBUG = true;
+    static final boolean DEBUG = true;
 }

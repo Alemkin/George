@@ -1,3 +1,4 @@
+package george;
 
 public class NPC {
     public NPC() {
