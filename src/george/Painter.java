@@ -29,6 +29,7 @@ public class Painter implements Subsystem {
         try {
             Display.setDisplayMode(new DisplayMode(800, 600));
             Display.create();
+            //TODO: Set up for OpenGL 3.0 use.
         } catch (LWJGLException e) {
             e.printStackTrace();
             System.exit(0);
@@ -68,9 +69,6 @@ public class Painter implements Subsystem {
         return shaderID;
     }
 
-    public int loadTexture(String filename) {
-    }
-
     public GameState onFrame(GameState s) {
     }
 
@@ -87,4 +85,6 @@ public class Painter implements Subsystem {
 
     public void destroy() {
     }
+
+    private TextureManager texs(Config.getManifestLocation());
 }

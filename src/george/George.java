@@ -35,31 +35,27 @@ public class George {
 
             Display.sync(60);
 
-            pollInput(); //TODO: Figure out how to deal with this elegantly.
-            //Probably move into Laws?
             GameState g = currentGameState;
 
             for(Subsystem s : subsystems) {
-                g = s.onFrame(g);
+                try{
+                    g = s.onFrame(g);
+                } catch (FatalException e) {
+                    System.err.println("FATAL exception occurred: "+e.getMessage());
+                    e.printStackTrace();
+                    System.exit(-1);
+                } catch (Exception e) {
+                    System.err.println("Exception occurred: "+e.getMessage());
+                    System.err.println("Continuing regardless.");
+                    e.printStackTrace();
+                }
             }
 
             currentGameState = g;
             lastTime = currentTime;
 
             Display.update();
-        }
-    }
-
-    public void destroy() {
-
-        for(Subsystem s : subsystems) {
-            s.destroy();
-        }
-
-        Display.destroy();
-    }
-
-    private void pollInput() {
+        }    private void pollInput() {
         while(Mouse.next()) {
             if(George.DEBUG) {
                 George.debug(Mouse.getEventX()+","+Mouse.getEventY()+": "+
@@ -72,6 +68,18 @@ public class George {
 
         while(Keyboard.next()) {
         }
+    }
+
+
+    }
+
+    public void destroy() {
+
+        for(Subsystem s : subsystems) {
+            s.destroy();
+        }
+
+        Display.destroy();
     }
 
     public static void main(String[] args) {
