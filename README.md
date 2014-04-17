@@ -14,7 +14,7 @@ TIME TRAVEL
 Yes
 
 HOW TO BUILD
-Have the lwjgl jar files in the lib/ folder, and any needed native libraries (.dll, .so, etc.) in native/.
+~~Have the lwjgl jar files in the lib/ folder, and any needed native libraries (.dll, .so, etc.) in native/.
 To build, use the commmand
     javac -cp .:lib/* *.java 
 
@@ -54,4 +54,4 @@ zombies, trees, baby hitler
 Attacks:
 Jump like mario?
 Or Weapon sets that get better?
-Or weapons you pick up with time, like a lightsaber in the future level(s)?
+Or weapons you pick up with time, like a lightsaber in the future level(s)?~~
