@@ -1,6 +1,9 @@
 package george;
 
 import java.lang.System;
+import java.lang.Thread;
+import java.lang.InterruptedException;
+
 import java.util.Vector;
 
 import org.lwjgl.opengl.Display;
@@ -54,33 +57,41 @@ public class George {
                 if(currentMenu.hasOneSelected()) {
                     currentMenu = currentMenu.getNewMenu();
                 }
-                continue;
-            }
+            } else {
 
-            long currentTime = System.currentTimeMillis();
-            currentGameState.dt = (currentTime - lastTime)/1000.0f;
+                long currentTime = System.currentTimeMillis();
+                currentGameState.dt = (currentTime - lastTime)/1000.0f;
 
-            Display.sync(60);
 
-            GameState g = currentGameState;
-            for(Subsystem s : subsystems) {
-                try{
-                    g = s.onFrame(g, events.toArray(new Event[0]));
-                    if(s.makeMenu()) {
-                        currentMenu = s.getMenu();
-                        break;
+                GameState g = currentGameState;
+                for(Subsystem s : subsystems) {
+                    try{
+                        g = s.onFrame(g, events.toArray(new Event[0]));
+                        if(s.makeMenu()) {
+                            currentMenu = s.getMenu();
+                            break;
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Exception occurred: "+e.getMessage());
+                        System.err.println("Continuing regardless.");
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    System.err.println("Exception occurred: "+e.getMessage());
-                    System.err.println("Continuing regardless.");
-                    e.printStackTrace();
                 }
-            }
 
-            currentGameState = g;
-            lastTime = currentTime;
+                currentGameState = g;
+                lastTime = currentTime;
+            }
 
             Display.update();
+            Display.sync(60);
+/*            long sleepMore = 1000/60 - System.currentTimeMillis() + currentTime;
+            if(sleepMore > 0) {
+                try {
+                    Thread.sleep(sleepMore);
+                } catch (InterruptedException e) {
+                }
+            }
+*/
         }
     }
 

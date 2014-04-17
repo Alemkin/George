@@ -33,13 +33,11 @@ public class Painter implements Subsystem {
 
     public void start() {
         try {
-            George.debug("OpenGL version: "+GL11.glGetString(GL11.GL_VERSION));
             Display.setDisplayMode(new DisplayMode(800, 600));
             Display.create(new PixelFormat(),
-                    new ContextAttribs(2, 1)
-                        .withForwardCompatible(true)
-                        .withProfileCore(true));
-            texs.load("assets/sprites.manifest");
+                    new ContextAttribs(2, 1));
+            George.debug("OpenGL version: "+GL11.glGetString(GL11.GL_VERSION));
+            //texs.load("assets/sprites.manifest");
         } catch (LWJGLException e) {
             e.printStackTrace();
             System.exit(0);
