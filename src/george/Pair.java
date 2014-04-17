@@ -8,4 +8,12 @@ public class Pair<X, Y> {
         this.x = x;
         this.y = y;
     }
+
+    public X fst() {
+        return x;
+    }
+
+    public Y snd() {
+        return y;
+    }
 }
