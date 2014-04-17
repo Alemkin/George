@@ -29,6 +29,7 @@ public class Painter implements Subsystem {
         try {
             Display.setDisplayMode(new DisplayMode(800, 600));
             Display.create();
+            texs.load("TODO.manifest");
             //TODO: Set up for OpenGL 3.0 use.
         } catch (LWJGLException e) {
             e.printStackTrace();
@@ -86,5 +87,5 @@ public class Painter implements Subsystem {
     public void destroy() {
     }
 
-    private TextureManager texs(Config.getManifestLocation());
+    private TextureManager texs;
 }

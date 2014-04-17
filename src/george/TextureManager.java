@@ -3,11 +3,22 @@ package george;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.Exception;
 import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
+
+import java.lang.Math;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
+import java.util.Vector;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -45,11 +56,8 @@ public class TextureManager {
 
     public void load(String manifest) {
 
-        final static int [] imageUnits = {GL13.GL_TEXTURE0, GL13.GL_TEXTURE1, 
-            GL13.GL_TEXTURE2, GL13.GL_TEXTURE3, GL13.GL_TEXTURE4,
-            GL13.GL_TEXTURE5, GL13.GL_TEXTURE6, GL13.GL_TEXTURE7};
-
         int maxSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
+        int count = 0;
         BufferedReader manifestBuffer = new BufferedReader(
                 new FileReader(manifest));
         ArrayList <ManifestEntry> boxFrames = 
@@ -61,7 +69,7 @@ public class TextureManager {
         while(ln != null) {
             String [] vars = ln.split(",");
             try {
-                BufferedImage img = ImageIO.read(vars[0]);
+                BufferedImage img = ImageIO.read(new File(vars[0]));
 
                 int idx=0;
                 for (int i=1;i<vars.length; i+=5) {
@@ -209,7 +217,7 @@ public class TextureManager {
 
             int texId = GL11.glGenTextures();
             GL13.glActiveTexture(imageUnits[count]);
-            GL11.glBindTexture(GL31.GL_TEXTURE_2d, texId);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
             GL11.glTexParameteri(texId, GL12.GL_TEXTURE_BASE_LEVEL, 0);
             GL11.glTexParameteri(texId, GL12.GL_MAX_LEVEL, 0);
             GL11.glTexImage2D(texId, 0, GL11.GL_RGBA8, maxSize, maxSize, 0, 
@@ -218,11 +226,11 @@ public class TextureManager {
             //TODO: Check to make sure this is correct.
 
             for(Pair<ManifestEntry, Vec2> s : packedPos) {
-                if(textureLegend.get(s.fst().nm) == null) {
-                    textureLegend.put(s.fst().nm, new Vector());
+                if(textureLegend.get(s.fst().name) == null) {
+                    textureLegend.put(s.fst().name, new Vector());
                 }
 
-                textureLegend.get(s.fst().nm).add(new Pair(
+                textureLegend.get(s.fst().name).add(new Pair(
                             count, new Rectangle(s.snd().x, s.snd().y, 
                                 s.fst().w, s.fst().h)));
 
@@ -237,7 +245,10 @@ public class TextureManager {
     }
 
 
-    private HashMap<String, Vector<Pair<Int, Vec2>> textureLegend;
+    private HashMap<String, Vector<Pair<Int, Rectangle>>> textureLegend;
     private Vector<BufferedImaged> textures;
     //Each sprite name with its corresponding texture and location within the texture.
+    final static int [] imageUnits = {GL13.GL_TEXTURE0, GL13.GL_TEXTURE1, 
+        GL13.GL_TEXTURE2, GL13.GL_TEXTURE3, GL13.GL_TEXTURE4,
+        GL13.GL_TEXTURE5, GL13.GL_TEXTURE6, GL13.GL_TEXTURE7};
 }

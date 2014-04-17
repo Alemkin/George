@@ -73,8 +73,6 @@ public class George {
     }
 
 
-    }
-
     public void destroy() {
 
         for(Subsystem s : subsystems) {
