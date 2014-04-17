@@ -1,14 +1,17 @@
 package george;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 import java.util.List;
 
-//TODO: Add Rectangle, GL-whatever, Raster
-
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 
 public class TextureManager {
 
@@ -41,6 +44,10 @@ public class TextureManager {
     }
 
     public void load(String manifest) {
+
+        final static int [] imageUnits = {GL13.GL_TEXTURE0, GL13.GL_TEXTURE1, 
+            GL13.GL_TEXTURE2, GL13.GL_TEXTURE3, GL13.GL_TEXTURE4,
+            GL13.GL_TEXTURE5, GL13.GL_TEXTURE6, GL13.GL_TEXTURE7};
 
         int maxSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
         BufferedReader manifestBuffer = new BufferedReader(
@@ -199,23 +206,33 @@ public class TextureManager {
                         s.fst().buf.getData(s.fst().getRect())
                 );
             }
-            //TODO: Pass to GPU, and get the id.
-            int texId;
+
+            int texId = GL11.glGenTextures();
+            GL13.glActiveTexture(imageUnits[count]);
+            GL11.glBindTexture(GL31.GL_TEXTURE_2d, texId);
+            GL11.glTexParameteri(texId, GL12.GL_TEXTURE_BASE_LEVEL, 0);
+            GL11.glTexParameteri(texId, GL12.GL_MAX_LEVEL, 0);
+            GL11.glTexImage2D(texId, 0, GL11.GL_RGBA8, maxSize, maxSize, 0, 
+                    GL11.GL_RGBA, GL11.GL_UNSIGNED_INT_8_8_8_8, 
+                    ByteBuffer.wrap(canvas.getPixels(0, 0, maxSize, maxSize)));
+            //TODO: Check to make sure this is correct.
 
             for(Pair<ManifestEntry, Vec2> s : packedPos) {
                 if(textureLegend.get(s.fst().nm) == null) {
-                    textureLegend.add(s.fst().nm, new Vector());
+                    textureLegend.put(s.fst().nm, new Vector());
                 }
 
                 textureLegend.get(s.fst().nm).add(new Pair(
-                            textId, s.snd()));
+                            count, new Rectangle(s.snd().x, s.snd().y, 
+                                s.fst().w, s.fst().h)));
 
                 boxFrames.remove(s.fst());
             }
+            count++;
         }
     }
 
-    Vector<Pair<Int, Vec2>> get(String str) {
+    Vector<Pair<Int, Rectangle>> get(String str) {
         return textureLegend.get(str);
     }
 
