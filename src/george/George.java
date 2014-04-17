@@ -1,7 +1,12 @@
 package george;
 
 import java.lang.System;
+import java.util.Vector;
+
 import org.lwjgl.opengl.Display;
+
+import org.lwjgl.input.Mouse;
+import org.lwjgl.input.Keyboard;
 
 public class George {
     private Subsystem[] subsystems;
@@ -30,6 +35,7 @@ public class George {
 
     public void loop() {
         long lastTime = System.currentTimeMillis();
+        Vector<Event> events = new Vector<Event>();
 
         while(!Display.isCloseRequested()) {
             if(currentMenu != null) {
@@ -46,10 +52,18 @@ public class George {
             Display.sync(60);
 
             GameState g = currentGameState;
+            events.clear();
+            while(Keyboard.next()) {
+                //TODO: poll
+            }
+
+            while(Mouse.next()) {
+                //TODO: poll
+            }
 
             for(Subsystem s : subsystems) {
                 try{
-                    g = s.onFrame(g);
+                    g = s.onFrame(g, events.toArray(new Event[0]));
                     if(s.makeMenu()) {
                         currentMenu = s.getMenu();
                         break;

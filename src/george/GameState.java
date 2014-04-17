@@ -15,7 +15,7 @@ public class GameState {
         npcs = new Vector<NPC>();
         tiles = new Vector<Tile>();
         entities = new Vector<Entity>();
-        player = new Player(0, 0);
+        player = new Player(new Vec2(0.0f, 0.0f));
 
         dt = 0.0f;
         t = 0.0f;

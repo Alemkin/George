@@ -20,8 +20,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL21;
+
 import org.lwjgl.opengl.PixelFormat;
+import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.util.glu.GLU;
 
 public class Painter implements Subsystem {
@@ -31,11 +33,13 @@ public class Painter implements Subsystem {
 
     public void start() {
         try {
+            George.debug("OpenGL version: "+GL11.glGetString(GL11.GL_VERSION));
             Display.setDisplayMode(new DisplayMode(800, 600));
-            Display.create();
-            //TODO: Set up a manifest file and stuff for TextureManager
-            //texs.load("TODO.manifest");
-            //TODO: Set up for OpenGL 3.0 use.
+            Display.create(new PixelFormat(),
+                    new ContextAttribs(2, 1)
+                        .withForwardCompatible(true)
+                        .withProfileCore(true));
+            texs.load("assets/sprites.manifest");
         } catch (LWJGLException e) {
             e.printStackTrace();
             System.exit(0);
@@ -67,18 +71,17 @@ public class Painter implements Subsystem {
         GL20.glShaderSource(shaderID, source);
         GL20.glCompileShader(shaderID);
 
-        if(GL20.glGetShader(shaderID, GL20.GL_COMPILE_STATUS) ==
+        if(GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) ==
                 GL11.GL_FALSE) {
-            System.err.println("Could not compiler shader.");
-            System.exit(-1);
+            System.err.println("Could not compile shader:"+filename);
+            this.exitOnGLError("loadShader");
         }
 
-        this.exitOnGLError("loadShader");
 
         return shaderID;
     }
 
-    public GameState onFrame(GameState s) {
+    public GameState onFrame(GameState s, Event[] events) {
         return s;
     }
 

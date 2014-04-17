@@ -4,7 +4,7 @@ package george;
 public class Science implements Subsystem {
     public void start() {}
 
-    public GameState onFrame(GameState s) {
+    public GameState onFrame(GameState s, Event[] events) {
         return s;
     }
 
