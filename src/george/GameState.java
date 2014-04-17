@@ -12,9 +12,9 @@ public class GameState {
     public float t;
 
     public GameState() {
-        npcs = new Vector();
-        tiles = new Vector();
-        entities = new Vector();
+        npcs = new Vector<NPC>();
+        tiles = new Vector<Tile>();
+        entities = new Vector<Entity>();
         player = new Player(0, 0);
 
         dt = 0.0f;

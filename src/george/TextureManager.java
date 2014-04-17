@@ -51,8 +51,8 @@ public class TextureManager {
     }
 
     public TextureManager() {
-        textureLegend = new HashMap();
-        textures = new Vector();
+        textureLegend = new HashMap<String, Vector<Pair<Integer, Rectangle>>>();
+        textures = new Vector<BufferedImage>();
     }
 
     public void load(String manifest) throws Exception {
@@ -62,7 +62,7 @@ public class TextureManager {
         BufferedReader manifestBuffer = new BufferedReader(
                 new FileReader(manifest));
         List <ManifestEntry> boxFrames = 
-            new LinkedList(); //Maybe convert to LinkedList later?
+            new LinkedList<ManifestEntry>(); //Maybe convert to LinkedList later?
                     /* source image, text, position, width/height */
 
         String ln = manifestBuffer.readLine();
@@ -123,19 +123,22 @@ public class TextureManager {
         //TODO: greedily pack into the texture image
         //While there's still frames to add..
         while(boxFrames.size() > 0) {
-            Vector<Pair<Integer, Integer>> unpackedArea = new Vector();
-            unpackedArea.add(new Pair(0, 0));
+            Vector<Pair<Integer, Integer>> unpackedArea =
+                new Vector<Pair<Integer, Integer>>();
+            unpackedArea.add(new Pair<Integer, Integer>(0, 0));
             //Describes the top edge of the unpacked space.
 
             BufferedImage currentTexture = new BufferedImage(maxSize, maxSize, 
                     BufferedImage.TYPE_4BYTE_ABGR);
             //And while not every one has been tried in this current texture..
-            List <Pair<ManifestEntry, Pair<Integer, Integer>>> packedPos = new LinkedList();
+            List <Pair<ManifestEntry, Pair<Integer, Integer>>> packedPos = 
+                new LinkedList<Pair<ManifestEntry, Pair<Integer, Integer>>>();
             
             for(ManifestEntry e : boxFrames) {
                 //For each sprite, find all the possible places for it
                 //to fit
-                List<Pair<Integer, Integer>> tlCorners = new LinkedList();
+                List<Pair<Integer, Integer>> tlCorners = 
+                    new LinkedList<Pair<Integer, Integer>>();
 
                 for(Pair<Integer, Integer> cnr : unpackedArea) {
                     int maxY = cnr.snd();
@@ -155,7 +158,7 @@ public class TextureManager {
 
                     if(maxY + e.h < maxSize && 
                             cnr.fst() + e.h < maxSize) {
-                        tlCorners.add(new Pair(cnr.fst(), maxY));
+                        tlCorners.add(new Pair<Integer, Integer>(cnr.fst(), maxY));
                     }
                 }
                     //All of this can be done in literally two lines
@@ -166,12 +169,13 @@ public class TextureManager {
                     //Now with that list find the best place to put it.
                     //..which I'll do later.
 
-                    packedPos.add(new Pair(e, bestPos));
+                    packedPos.add(new Pair<ManifestEntry,Pair<Integer,Integer>>(e, bestPos));
                     int endY = bestPos.y;
 
                     //Now to update the edge list
                     //Find the ones that the new packing box will overwrite
-                    Vector<Pair<Integer, Integer>> toRemove = new Vector();
+                    Vector<Pair<Integer, Integer>> toRemove = 
+                        new Vector<Pair<Integer, Integer>>();
                     for(Pair<Integer, Integer> p : unpackedArea) {
                         if(p.fst() >= bestPos.x && 
                                 p.fst() < bestPos.x+e.w) {
@@ -186,7 +190,7 @@ public class TextureManager {
                             unpackedArea.get(before).fst() <= bestPos.x) {
                         before++;
                     }
-                    unpackedArea.add(before, new Pair(bestPos.x,
+                    unpackedArea.add(before, new Pair<Integer, Integer>(bestPos.x,
                                 bestPos.y));
 
                     int after = before+1;
@@ -195,7 +199,7 @@ public class TextureManager {
                             bestPos.x + e.w) {
                         after++;
                     }
-                    unpackedArea.add(after, new Pair(
+                    unpackedArea.add(after, new Pair<Integer, Integer>(
                                 bestPos.x + e.w,
                                 endY));
 
@@ -231,10 +235,11 @@ public class TextureManager {
 
             for(Pair<ManifestEntry, Pair<Integer, Integer>> s : packedPos) {
                 if(textureLegend.get(s.fst().name) == null) {
-                    textureLegend.put(s.fst().name, new Vector());
+                    textureLegend.put(s.fst().name, 
+                            new Vector<Pair<Integer, Rectangle>>());
                 }
 
-                textureLegend.get(s.fst().name).add(new Pair(
+                textureLegend.get(s.fst().name).add(new Pair<Integer, Rectangle>(
                             count, new Rectangle(s.snd().x, s.snd().y, 
                                 s.fst().w, s.fst().h)));
 

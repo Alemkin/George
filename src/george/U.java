@@ -1,3 +1,5 @@
+package george;
+
 // Utilities class
 //
 import java.util.Collection;

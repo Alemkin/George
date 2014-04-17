@@ -25,11 +25,16 @@ import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
 public class Painter implements Subsystem {
+    public Painter() {
+        texs = new TextureManager();
+    }
+
     public void start() {
         try {
             Display.setDisplayMode(new DisplayMode(800, 600));
             Display.create();
-            texs.load("TODO.manifest");
+            //TODO: Set up a manifest file and stuff for TextureManager
+            //texs.load("TODO.manifest");
             //TODO: Set up for OpenGL 3.0 use.
         } catch (LWJGLException e) {
             e.printStackTrace();
