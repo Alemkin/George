@@ -10,4 +10,14 @@ public class GameState {
 
     public float dt;
     public float t;
+
+    public GameState() {
+        npcs = new Vector();
+        tiles = new Vector();
+        entities = new Vector();
+        player = new Player(0, 0);
+
+        dt = 0.0f;
+        t = 0.0f;
+    }
 }

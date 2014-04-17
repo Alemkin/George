@@ -34,6 +34,9 @@ public class Painter implements Subsystem {
         } catch (LWJGLException e) {
             e.printStackTrace();
             System.exit(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
         }
         //TODO: Set up basic shaders, load sprite textures, etc.
     }
@@ -71,6 +74,7 @@ public class Painter implements Subsystem {
     }
 
     public GameState onFrame(GameState s) {
+        return s;
     }
 
     private void exitOnGLError(String s) {
@@ -85,6 +89,14 @@ public class Painter implements Subsystem {
 
 
     public void destroy() {
+    }
+
+    public boolean makeMenu() {
+        return false;
+    }
+
+    public Menu getMenu() {
+        return null;
     }
 
     private TextureManager texs;

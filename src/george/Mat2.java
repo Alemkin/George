@@ -29,6 +29,7 @@ public class Mat2 {
     }
 
     public Mat2 inv() {
-        //TODO
+        float dodo = det();
+        return new Mat2(d/dodo, -b/dodo, -c/dodo, a/dodo);
     }
 }

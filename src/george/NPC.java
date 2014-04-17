@@ -5,5 +5,6 @@ public class NPC {
     }
 
     public GameState onInteract(GameState s) {
+        return s;
     }
 }

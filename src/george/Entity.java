@@ -1,5 +1,4 @@
 package george;
 
-public class Entity extends Sprite {
-    //TODO
+public class Entity {
 }

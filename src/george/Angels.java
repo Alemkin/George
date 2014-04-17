@@ -1,8 +1,7 @@
 package george;
 
-//TODO: Put script support here.
-
-public class Laws implements Subsystem {
+//AI class
+public class Angels implements Subsystem {
     public void start() {
     }
 

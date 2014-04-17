@@ -21,7 +21,7 @@ public class George {
 
     public void start() {
         currentGameState = loadGameState();
-        curretGameMenu = new StartMenu();
+        currentMenu = new StartMenu();
 
         for(Subsystem s : subsystems) {
             s.start();
@@ -54,10 +54,6 @@ public class George {
                         currentMenu = s.getMenu();
                         break;
                     }
-                } catch (FatalException e) {
-                    System.err.println("FATAL exception occurred: "+e.getMessage());
-                    e.printStackTrace();
-                    System.exit(-1);
                 } catch (Exception e) {
                     System.err.println("Exception occurred: "+e.getMessage());
                     System.err.println("Continuing regardless.");
