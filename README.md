@@ -5,12 +5,13 @@ TO DO:
 * Nail down the basic mechanics
 * Build game engine
 * Lots of storyline work, art, maps, etc.
-* Add in FPS elements
 * Add in action elements
-* Add in MMO elements
 * Add in RPG elements
 * Guns
 * Make many players very happy!
+
+TIME TRAVEL
+Yes
 
 HOW TO BUILD
 Have the lwjgl jar files in the lib/ folder, and any needed native libraries (.dll, .so, etc.) in native/.

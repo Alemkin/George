@@ -6,6 +6,7 @@ import org.lwjgl.opengl.Display;
 public class George {
     private Subsystem[] subsystems;
     private GameState currentGameState;
+    private Menu currentMenu;
 
     public George() {
         subsystems = new Subsystem[] {new Angels(), new Laws(),
@@ -20,6 +21,7 @@ public class George {
 
     public void start() {
         currentGameState = loadGameState();
+        curretGameMenu = new StartMenu();
 
         for(Subsystem s : subsystems) {
             s.start();
@@ -30,6 +32,14 @@ public class George {
         long lastTime = System.currentTimeMillis();
 
         while(!Display.isCloseRequested()) {
+            if(currentMenu != null) {
+                currentMenu.onFrame(currentGameState);
+                if(currentMenu.hasOneSelected()) {
+                    currentMenu = currentMenu.getNewMenu();
+                }
+                continue;
+            }
+
             long currentTime = System.currentTimeMillis();
             currentGameState.dt = (currentTime - lastTime)/1000.0f;
 
@@ -40,6 +50,10 @@ public class George {
             for(Subsystem s : subsystems) {
                 try{
                     g = s.onFrame(g);
+                    if(s.makeMenu()) {
+                        currentMenu = s.getMenu();
+                        break;
+                    }
                 } catch (FatalException e) {
                     System.err.println("FATAL exception occurred: "+e.getMessage());
                     e.printStackTrace();
@@ -55,18 +69,6 @@ public class George {
             lastTime = currentTime;
 
             Display.update();
-        }    private void pollInput() {
-        while(Mouse.next()) {
-            if(George.DEBUG) {
-                George.debug(Mouse.getEventX()+","+Mouse.getEventY()+": "+
-                    Mouse.getEventButton()+" "+
-                    (Mouse.getEventButtonState()?"true":"false"));
-            }
-            //TODO: Convert this raw output into 
-            //mouseMove, mouseClick, mouseDown, mouseUp events.
-        }
-
-        while(Keyboard.next()) {
         }
     }
 
