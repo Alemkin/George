@@ -38,8 +38,19 @@ public class George {
         Vector<Event> events = new Vector<Event>();
 
         while(!Display.isCloseRequested()) {
+
+            events.clear();
+            while(Keyboard.next()) {
+                //TODO: poll
+            }
+
+            while(Mouse.next()) {
+                //TODO: poll
+            }
+            
             if(currentMenu != null) {
-                currentMenu.onFrame(currentGameState);
+                currentGameState = currentMenu.onFrame(currentGameState,
+                        events.toArray(new Event[0]));
                 if(currentMenu.hasOneSelected()) {
                     currentMenu = currentMenu.getNewMenu();
                 }
@@ -52,15 +63,6 @@ public class George {
             Display.sync(60);
 
             GameState g = currentGameState;
-            events.clear();
-            while(Keyboard.next()) {
-                //TODO: poll
-            }
-
-            while(Mouse.next()) {
-                //TODO: poll
-            }
-
             for(Subsystem s : subsystems) {
                 try{
                     g = s.onFrame(g, events.toArray(new Event[0]));
