@@ -1,0 +1,8 @@
+Things to do:
+
+-Science/Law/Angels
+    (Need a game mechanic first)
+-Painter
+    Get support for streaming/printing large backgrounds
+    Write basic shaders
+    Stream sprites into vertex array (Painter.onFrame needs to be filled in)
