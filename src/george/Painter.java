@@ -37,7 +37,7 @@ public class Painter implements Subsystem {
             Display.create(new PixelFormat(),
                     new ContextAttribs(2, 1));
             George.debug("OpenGL version: "+GL11.glGetString(GL11.GL_VERSION));
-            //texs.load("assets/sprites.manifest");
+            texs.load("assets/sprites.manifest");
         } catch (LWJGLException e) {
             e.printStackTrace();
             System.exit(0);
@@ -45,7 +45,7 @@ public class Painter implements Subsystem {
             e.printStackTrace();
             System.exit(0);
         }
-        //TODO: Set up basic shaders, load sprite textures, etc.
+        //TODO: Set up basic shaders, etc.
     }
 
     private int loadShader(String filename, int type) {
@@ -80,6 +80,10 @@ public class Painter implements Subsystem {
     }
 
     public GameState onFrame(GameState s, Event[] events) {
+        //Three different rendering jobs:
+        //TODO: Background
+        //TODO: Sprites
+        //TODO: Text/UI
         return s;
     }
 

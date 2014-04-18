@@ -55,6 +55,7 @@ public class TextureManager {
         textures = new Vector<BufferedImage>();
     }
 
+    //TODO: Refactor into smaller chunks, memoize results for later loading
     public void load(String manifest) throws Exception {
 
         int maxSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
@@ -120,7 +121,6 @@ public class TextureManager {
         }
 
 
-        //TODO: greedily pack into the texture image
         //While there's still frames to add..
         while(boxFrames.size() > 0) {
             Vector<Pair<Integer, Integer>> unpackedArea =
@@ -167,7 +167,15 @@ public class TextureManager {
                 if(tlCorners.size() > 0) {
                     Pair<Integer, Integer> bestPos = tlCorners.get(0);
                     //Now with that list find the best place to put it.
-                    //..which I'll do later.
+                    //I'll define that as the corner with the lowest x and y
+                    //values, with lowest y a priority
+                    for(Pair<Integer, Integer> newPos : tlCorners) {
+                        if(newPos.snd() < bestPos.snd() ||
+                                (newPos.snd() == best.snd() &&
+                                 newPos.fst() < best.fst())) {
+                            bestPos = newPos;
+                        }
+                    }
 
                     packedPos.add(new Pair<ManifestEntry,Pair<Integer,Integer>>(e, bestPos));
                     int endY = bestPos.y;

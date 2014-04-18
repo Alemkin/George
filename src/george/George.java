@@ -44,7 +44,11 @@ public class George {
 
             events.clear();
             while(Keyboard.next()) {
-                //TODO: poll
+                if(Keyboard.getEventKeyState()) {
+                    events.add(Event.onKeyDown(Keyboard.getEventCharacter());
+                } else {
+                    events.add(Event.onKeyUp(Keyboard.getEventCharacter());
+                }
             }
 
             while(Mouse.next()) {
@@ -108,8 +112,11 @@ public class George {
     public static void main(String[] args) {
         George king = new George();
         king.start();
-        king.loop();
-        king.destroy();
+        try {
+            king.loop();
+        } finally {
+            king.destroy();
+        }
     }
 
     public static void debug(String s) {
