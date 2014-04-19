@@ -31,7 +31,7 @@ public class TextureManager {
         final public String name;
         final public BufferedImage b;
         final public int x, y, w, h;
-        final public int idx;
+        final public int idx;   //Looks like this is removable?
 
         public ManifestEntry(BufferedImage buf, String nm, int index, 
                 int xx, int yy, 
@@ -59,6 +59,7 @@ public class TextureManager {
     public void load(String manifest) throws Exception {
 
         int maxSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
+        George.debug("Max texture size: "+maxSize);
         int count = 0;
         BufferedReader manifestBuffer = new BufferedReader(
                 new FileReader(manifest));
@@ -68,6 +69,7 @@ public class TextureManager {
 
         String ln = manifestBuffer.readLine();
 
+        George.debug("Parsing "+manifest);
         while(ln != null) {
             String [] vars = ln.split(",");
             try {
@@ -119,6 +121,7 @@ public class TextureManager {
             //Get the next file and entries.
             ln = manifestBuffer.readLine();
         }
+        George.debug("Loaded "+boxFrames.size()+" sprite frames");
 
 
         //While there's still frames to add..
@@ -134,7 +137,6 @@ public class TextureManager {
             List <Pair<ManifestEntry, Vec2i>> packedPos = 
                 new LinkedList<Pair<ManifestEntry, Vec2i>>();
             
-            //TODO: Fuse following loops into a single loop.
             for(ManifestEntry e : boxFrames) {
                 //For each sprite, find all the possible places for it
                 //to fit
@@ -226,13 +228,16 @@ public class TextureManager {
 
             byte [] ary = ((DataBufferByte) currentTexture.getData().
                     getDataBuffer()).getData();
+            //TODO: May need some byte swizzling to get this formatted correctly!
 
             int texId = GL11.glGenTextures();
             int curTexture = TextureManager.getCount();
-            GL13.glActiveTexture(imageUnits[curTexture]);
+            GL13.glActiveTexture(GL13.GL_TEXTURE0 + curTexture);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
             GL11.glTexParameteri(texId, GL12.GL_TEXTURE_BASE_LEVEL, 0);
             GL11.glTexParameteri(texId, GL12.GL_TEXTURE_MAX_LEVEL, 0);
+            GL11.glTexParameteri(texId, GL11.GL_TEXTURE_MAG_FILTER,
+                    GL11.GL_NEAREST);   //Need this for pixel art
             GL11.glTexImage2D(texId, 0, GL11.GL_RGBA8, maxSize, maxSize, 0, 
                     GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8, 
                     ByteBuffer.wrap(ary));
@@ -260,7 +265,7 @@ public class TextureManager {
     private static int getCount() throws Exception {
         count++;
         if(count > 8) {
-            throw new Exception("Using more than 8 textures is unimplemented");
+            throw new Exception("Using more than 8 textures? Inconceivable!");
         }
         return count-1;
     }
@@ -268,8 +273,5 @@ public class TextureManager {
     private HashMap<String, Vector<Pair<Integer, Rectangle>>> textureLegend;
     private Vector<BufferedImage> textures;
     //Each sprite name with its corresponding texture and location within the texture.
-    final static int [] imageUnits = {GL13.GL_TEXTURE0, GL13.GL_TEXTURE1, 
-        GL13.GL_TEXTURE2, GL13.GL_TEXTURE3, GL13.GL_TEXTURE4,
-        GL13.GL_TEXTURE5, GL13.GL_TEXTURE6, GL13.GL_TEXTURE7};
     private static int count = 0;
 }
