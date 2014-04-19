@@ -35,7 +35,17 @@ public class Event {
     }
 
     public static Event onMouseMove(int x, int y) {
-        return new Event(Event.MOUSE_EVENT, null, new MouseEvent(true, true, x, y));
+        return new Event(Event.MOUSE_EVENT, null, new MouseEvent(-1, true, x, y));
+    }
+
+    public static Event onMousePress(int num, int x, int y) {
+        return new Event(Event.MOUSE_EVENT, null,
+                new MouseEvent(num, false, x, y));
+    }
+
+    public static Event onMouseRelease(int num, int x, int y) {
+        return new Event(Event.MOUSE_EVENT, null,
+                new MouseEvent(num, true, x, y));
     }
 
     public static class KeyEvent {
@@ -52,13 +62,13 @@ public class Event {
 
     //TODO: Check that all this is semantically correct.
     public static class MouseEvent {
-        public final boolean isLUp;
-        public final boolean isRUp;
+        public final int buttonNum;
+        public final boolean isUp;
         public final int x, y;
 
-        public MouseEvent(boolean lup, boolean rup, int x, int y) {
-            isLUp = lup;
-            isRUp = rup;
+        public MouseEvent(int num, boolean up, int x, int y) {
+            buttonNum = num;
+            isUp = up;
             this.x = x;
             this.y = y;
         }

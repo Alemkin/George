@@ -123,33 +123,33 @@ public class TextureManager {
 
         //While there's still frames to add..
         while(boxFrames.size() > 0) {
-            Vector<Pair<Integer, Integer>> unpackedArea =
-                new Vector<Pair<Integer, Integer>>();
-            unpackedArea.add(new Pair<Integer, Integer>(0, 0));
+            Vector<Vec2i> unpackedArea =
+                new Vector<Vec2i>();
+            unpackedArea.add(new Vec2i(0, 0));
             //Describes the top edge of the unpacked space.
 
             BufferedImage currentTexture = new BufferedImage(maxSize, maxSize, 
                     BufferedImage.TYPE_4BYTE_ABGR);
             //And while not every one has been tried in this current texture..
-            List <Pair<ManifestEntry, Pair<Integer, Integer>>> packedPos = 
-                new LinkedList<Pair<ManifestEntry, Pair<Integer, Integer>>>();
+            List <Pair<ManifestEntry, Vec2i>> packedPos = 
+                new LinkedList<Pair<ManifestEntry, Vec2i>>();
             
+            //TODO: Fuse following loops into a single loop.
             for(ManifestEntry e : boxFrames) {
                 //For each sprite, find all the possible places for it
                 //to fit
-                List<Pair<Integer, Integer>> tlCorners = 
-                    new LinkedList<Pair<Integer, Integer>>();
+                List<Vec2i> tlCorners = new LinkedList<Vec2i>();
 
-                for(Pair<Integer, Integer> cnr : unpackedArea) {
-                    int maxY = cnr.snd();
+                for(Vec2i cnr : unpackedArea) {
+                    int maxY = cnr.y;
 
-                    for(Pair<Integer, Integer> o : unpackedArea) {
-                        if(o.fst() < cnr.fst()) {
+                    for(Vec2i o : unpackedArea) {
+                        if(o.x < cnr.x) {
                             continue;
                         }
-                        if(o.fst() <= cnr.fst() + e.w) {
-                            if(o.snd() > maxY) {
-                                maxY = o.snd();
+                        if(o.x <= cnr.x + e.w) {
+                            if(o.y > maxY) {
+                                maxY = o.y;
                             } else {
                                 break;
                             }
@@ -157,62 +157,58 @@ public class TextureManager {
                     }
 
                     if(maxY + e.h < maxSize && 
-                            cnr.fst() + e.h < maxSize) {
-                        tlCorners.add(new Pair<Integer, Integer>(cnr.fst(), maxY));
+                            cnr.y + e.h < maxSize) {
+                        tlCorners.add(new Vec2i(cnr.x, maxY));
                     }
                 }
                     //All of this can be done in literally two lines
                     // of Haskell or Python >.>
 
                 if(tlCorners.size() > 0) {
-                    Pair<Integer, Integer> bestPos = tlCorners.get(0);
+                    Vec2i bestPos = tlCorners.get(0);
                     //Now with that list find the best place to put it.
                     //I'll define that as the corner with the lowest x and y
                     //values, with lowest y a priority
-                    for(Pair<Integer, Integer> newPos : tlCorners) {
-                        if(newPos.snd() < bestPos.snd() ||
-                                (newPos.snd() == best.snd() &&
-                                 newPos.fst() < best.fst())) {
+                    for(Vec2i newPos : tlCorners) {
+                        if(newPos.y < bestPos.y ||
+                                (newPos.y == bestPos.y && 
+                                 newPos.x < bestPos.x)) {
                             bestPos = newPos;
                         }
                     }
 
-                    packedPos.add(new Pair<ManifestEntry,Pair<Integer,Integer>>(e, bestPos));
+                    packedPos.add(new Pair<ManifestEntry, Vec2i>(e, bestPos));
                     int endY = bestPos.y;
 
                     //Now to update the edge list
                     //Find the ones that the new packing box will overwrite
-                    Vector<Pair<Integer, Integer>> toRemove = 
-                        new Vector<Pair<Integer, Integer>>();
-                    for(Pair<Integer, Integer> p : unpackedArea) {
-                        if(p.fst() >= bestPos.x && 
-                                p.fst() < bestPos.x+e.w) {
+                    Vector<Vec2i> toRemove = new Vector<Vec2i>();
+                    for(Vec2i p : unpackedArea) {
+                        if(p.x >= bestPos.x && 
+                                p.x < bestPos.x+e.w) {
                             toRemove.add(p);
-                            endY = p.snd();
+                            endY = p.y;
                         }
                     }
 
                     //Add the starting and ending edges for the new box
                     int before = 0;
                     while(before < unpackedArea.size() && 
-                            unpackedArea.get(before).fst() <= bestPos.x) {
+                            unpackedArea.get(before).x <= bestPos.x) {
                         before++;
                     }
-                    unpackedArea.add(before, new Pair<Integer, Integer>(bestPos.x,
-                                bestPos.y));
+                    unpackedArea.add(before, new Vec2i(bestPos.x, bestPos.y));
 
                     int after = before+1;
                     while(after < unpackedArea.size() &&
-                            unpackedArea.get(after).fst() <= 
+                            unpackedArea.get(after).x <= 
                             bestPos.x + e.w) {
                         after++;
                     }
-                    unpackedArea.add(after, new Pair<Integer, Integer>(
-                                bestPos.x + e.w,
-                                endY));
+                    unpackedArea.add(after, new Vec2i(bestPos.x + e.w, endY));
 
                     //Remove them
-                    for(Pair<Integer, Integer> p : toRemove) {
+                    for(Vec2i p : toRemove) {
                         unpackedArea.remove(p);
                     }
                 }
@@ -222,7 +218,7 @@ public class TextureManager {
 
             //Pack all the textures into the frame, transfer to GPU,
             //log in hash table, and remove from available sprites list.
-            for(Pair<ManifestEntry, Pair<Integer, Integer>> s : packedPos) {
+            for(Pair<ManifestEntry, Vec2i> s : packedPos) {
                 canvas.setRect(s.snd().x, s.snd().y,
                         s.fst().b.getData(s.fst().getRect())
                 );
@@ -232,7 +228,8 @@ public class TextureManager {
                     getDataBuffer()).getData();
 
             int texId = GL11.glGenTextures();
-            GL13.glActiveTexture(imageUnits[count]);
+            int curTexture = TextureManager.getCount();
+            GL13.glActiveTexture(imageUnits[curTexture]);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
             GL11.glTexParameteri(texId, GL12.GL_TEXTURE_BASE_LEVEL, 0);
             GL11.glTexParameteri(texId, GL12.GL_TEXTURE_MAX_LEVEL, 0);
@@ -241,19 +238,18 @@ public class TextureManager {
                     ByteBuffer.wrap(ary));
             //TODO: Check to make sure this is correct.
 
-            for(Pair<ManifestEntry, Pair<Integer, Integer>> s : packedPos) {
+            for(Pair<ManifestEntry, Vec2i> s : packedPos) {
                 if(textureLegend.get(s.fst().name) == null) {
                     textureLegend.put(s.fst().name, 
                             new Vector<Pair<Integer, Rectangle>>());
                 }
 
                 textureLegend.get(s.fst().name).add(new Pair<Integer, Rectangle>(
-                            count, new Rectangle(s.snd().x, s.snd().y, 
+                            curTexture, new Rectangle(s.snd().x, s.snd().y, 
                                 s.fst().w, s.fst().h)));
 
                 boxFrames.remove(s.fst());
             }
-            count++;
         }
     }
 
@@ -261,6 +257,13 @@ public class TextureManager {
         return textureLegend.get(str);
     }
 
+    private static int getCount() throws Exception {
+        count++;
+        if(count > 8) {
+            throw new Exception("Using more than 8 textures is unimplemented");
+        }
+        return count-1;
+    }
 
     private HashMap<String, Vector<Pair<Integer, Rectangle>>> textureLegend;
     private Vector<BufferedImage> textures;
@@ -268,4 +271,5 @@ public class TextureManager {
     final static int [] imageUnits = {GL13.GL_TEXTURE0, GL13.GL_TEXTURE1, 
         GL13.GL_TEXTURE2, GL13.GL_TEXTURE3, GL13.GL_TEXTURE4,
         GL13.GL_TEXTURE5, GL13.GL_TEXTURE6, GL13.GL_TEXTURE7};
+    private static int count = 0;
 }

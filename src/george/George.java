@@ -45,13 +45,14 @@ public class George {
             events.clear();
             while(Keyboard.next()) {
                 if(Keyboard.getEventKeyState()) {
-                    events.add(Event.onKeyDown(Keyboard.getEventCharacter());
+                    events.add(Event.onKeyDown(Keyboard.getEventCharacter()));
                 } else {
-                    events.add(Event.onKeyUp(Keyboard.getEventCharacter());
+                    events.add(Event.onKeyUp(Keyboard.getEventCharacter()));
                 }
             }
 
             while(Mouse.next()) {
+                //if(Mouse.g
                 //TODO: poll
             }
             
