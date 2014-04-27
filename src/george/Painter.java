@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Vector;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -80,9 +81,14 @@ public class Painter implements Subsystem {
     }
 
     public GameState onFrame(GameState s, Event[] events) {
+        Vector<Float> vertices = new Vector<Float>();
+        Vector<Integer> indices = new Vector<Integer>();
         //Three different rendering jobs:
         //TODO: Background
         //TODO: Sprites
+        for(Entity e : s.entities) {
+            Sprite currentSprite = e.getSprite();
+        }
         //TODO: Text/UI
         return s;
     }

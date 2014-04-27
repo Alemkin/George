@@ -1,8 +1,10 @@
 package george;
 
 public class Entity {
+    final public float x, y;
     public Entity(Vec2 pos) {
-        super(pos.x, pos.y);
+        x = pos.x;
+        y = pos.y;
     }
 
     public GameState onInteract(GameState g) {
