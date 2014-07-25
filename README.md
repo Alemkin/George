@@ -6,7 +6,7 @@ George is an open source 2D game engine that is written in frege and Java using 
 
 
 ### How to Build
-Have the `lwjgl` jar files in the [`lib/`](/lib)  folder, and any needed native libraries (.dll, .so, etc.) in [`native/`](/native).
+Have the `LWJGL` jar files in the `lib/` folder, and any needed native libraries (.dll, .so, etc.) in `native/`.
 
 To build, use the commmand
 
